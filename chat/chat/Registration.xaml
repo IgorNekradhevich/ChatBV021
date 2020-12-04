@@ -1,0 +1,26 @@
+﻿<Window x:Class="chat.Registration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:chat"
+        mc:Ignorable="d"
+        Title="Registration" Height="280" Width="200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="5*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="IpAddres" FontSize="30" Margin="5" >127.0.0.1</TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="myName" FontSize="30" Margin="5" >Игорь</TextBox>
+        <Button  Grid.Row="3" Grid.Column="1" Content="Присоедениться" Margin="5" Click="Button_Click"></Button>
+    </Grid>
+</Window>
