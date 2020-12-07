@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,7 +46,10 @@ namespace chat
             networkStream = client.GetStream();
             byte[] buffer = Encoding.UTF8.GetBytes("<myName>"+myName);
             networkStream.Write(buffer, 0, buffer.Length);
-
+            Thread.Sleep(300);
+            buffer = Encoding.UTF8.GetBytes("<myID>" + reg.userId.ToString());
+            networkStream.Write(buffer, 0, buffer.Length);
+           
             task = new Task(ServerListner);
             task.Start();
 
@@ -133,6 +137,22 @@ namespace chat
                 byte[] buffer = Encoding.UTF8.GetBytes(MyMessage.Text);
                 networkStream.Write(buffer, 0, buffer.Length);
                 MyMessage.Text = "";
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (OnlineList.SelectedIndex > -1)
+            {
+                networkStream = client.GetStream();
+                byte[] buffer = Encoding.UTF8.GetBytes("<private id:" +
+                    OnlineClients[OnlineList.SelectedIndex].Id.ToString() + ">" + MyMessage.Text);
+                networkStream.Write(buffer, 0, buffer.Length);
+                MyMessage.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Укажите кому хотите отправить приватное сообщение");
             }
         }
     }

@@ -16,8 +16,11 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <ListBox  x:Name="ChatHistory" ></ListBox>
-        <Button  Grid.Column="1" Grid.Row="1" Content="Send" x:Name="SendMessage" Click="SendMessage_Click"></Button>
-        <ListBox Grid.Column="1" x:Name="OnlineList"></ListBox>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+               <Button Content="Send" x:Name="SendMessage" Click="SendMessage_Click"></Button>
+               <Button Content="Private" Click="Button_Click"/>
+        </StackPanel>
+            <ListBox Grid.Column="1" x:Name="OnlineList"></ListBox>
         <TextBox  KeyDown="SendMessage_KeyDown" FontSize="30" Grid.Row="1" x:Name="MyMessage"></TextBox>
     </Grid>
 </Window>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:chat"
         mc:Ignorable="d"
-        Title="Registration" Height="280" Width="200">
+        Title="Login" Height="280" Width="200">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -18,9 +18,14 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="1" Grid.Column="1" x:Name="IpAddres" FontSize="30" Margin="5" >127.0.0.1</TextBox>
-        <TextBox Grid.Row="2" Grid.Column="1" x:Name="myName" FontSize="30" Margin="5" >Игорь</TextBox>
-        <Button  Grid.Row="3" Grid.Column="1" Content="Присоедениться" Margin="5" Click="Button_Click"></Button>
+        <TextBox Grid.Row="1" Grid.Column="1" x:Name="IpAddres" FontSize="22" Margin="5" >127.0.0.1</TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="myName" FontSize="22" Margin="5" >Игорь</TextBox>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="myLogin" FontSize="22" Margin="5" >admin</TextBox>
+        <PasswordBox Grid.Row="4" Grid.Column="1" x:Name="myPass" FontSize="22" Margin="5" ></PasswordBox>
+        <Label MouseDown="Label_MouseDown"  Grid.Row="6" HorizontalAlignment="Center" FontSize="10" Grid.Column="1">Зарегестрироватся</Label>
+        <Button  Grid.Row="5" Grid.Column="1" Content="Присоедениться" Margin="5" Click="Button_Click"></Button>
     </Grid>
 </Window>
