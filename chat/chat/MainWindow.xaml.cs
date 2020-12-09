@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -44,12 +45,19 @@ namespace chat
             client.Connect(ip, port);
 
             networkStream = client.GetStream();
-            byte[] buffer = Encoding.UTF8.GetBytes("<myName>"+myName);
+            byte[] buffer = Encoding.UTF8.GetBytes("<myName>"+myName+ "<myID>" + reg.userId.ToString());
             networkStream.Write(buffer, 0, buffer.Length);
-            Thread.Sleep(300);
-            buffer = Encoding.UTF8.GetBytes("<myID>" + reg.userId.ToString());
-            networkStream.Write(buffer, 0, buffer.Length);
-           
+            //<myName>IGOR<myID>2
+
+            DataBaseConnection dataBaseConnection = new DataBaseConnection("localhost", "chatdb", "root", "");
+            DataTable table= dataBaseConnection.MessagesFromDB(reg.userId, 30);
+            int len = table.Rows.Count;
+            for (int i = len - 1; i >= 0; i--)
+            {
+               ChatHistory.Items.Add (table.Rows[i].ItemArray[3]+":"+ table.Rows[i].ItemArray[4]);
+
+            }
+
             task = new Task(ServerListner);
             task.Start();
 
@@ -59,8 +67,6 @@ namespace chat
 
         void ServerListner()
         {
-            //OnlineList.Items.Clear();
-            //OnlineList.Items.Add()
             while (client.Connected)
             if (client.Available > 0)
             {
