@@ -31,56 +31,61 @@ namespace chat
         string[] online;
         List<Client> OnlineClients;
         string myName;
-        public MainWindow()
+
+        void MessageToServer(NetworkStream networkStream, string message)
         {
-            InitializeComponent();
-
-             reg= new Registration();
-            reg.ShowDialog();
-            OnlineClients = new List<Client>();
-            IPAddress ip = IPAddress.Parse(reg.IpAddres.Text);
-            myName = reg.myName.Text;
-            int port = 8888;
-            client = new TcpClient();
-            client.Connect(ip, port);
-
-            networkStream = client.GetStream();
-            byte[] buffer = Encoding.UTF8.GetBytes("<myName>"+myName+ "<myID>" + reg.userId.ToString());
+            byte[] buffer = Encoding.UTF8.GetBytes(message);
             networkStream.Write(buffer, 0, buffer.Length);
-            //<myName>IGOR<myID>2
-
+        }
+        void LoadHistoty()
+        {
             DataBaseConnection dataBaseConnection = new DataBaseConnection("localhost", "chatdb", "root", "");
-            DataTable table= dataBaseConnection.MessagesFromDB(reg.userId, 30);
+            DataTable table = dataBaseConnection.MessagesFromDB(reg.userId, 30);
             int len = table.Rows.Count;
             for (int i = len - 1; i >= 0; i--)
             {
-               ChatHistory.Items.Add (table.Rows[i].ItemArray[3]+":"+ table.Rows[i].ItemArray[4]);
+                ChatHistory.Items.Add(table.Rows[i].ItemArray[3] + ":" + table.Rows[i].ItemArray[4]);
 
             }
-
-            task = new Task(ServerListner);
-            task.Start();
-
         }
 
-        
+        public MainWindow()
+        {
+            InitializeComponent();
+            
+            reg= new Registration();
+            reg.ShowDialog();
+            if (reg.userId <=0)
+                Close();
+            else
+            {
+                OnlineClients = new List<Client>();
+                IPAddress ip = IPAddress.Parse(reg.IpAddres.Text);
+                myName = reg.myName.Text;
+                int port = 8888;
+                client = new TcpClient();
+                client.Connect(ip, port);
+                networkStream = client.GetStream();
+                MessageToServer(networkStream, "<myName>" + myName + "<myID>" + reg.userId.ToString());
+                LoadHistoty();
+                task = new Task(ServerListner);
+                task.Start();
+            }
+        }
 
         void ServerListner()
         {
             while (client.Connected)
-            if (client.Available > 0)
-            {
-
-                byte[] buffer = new byte[1024];
+                if (client.Available > 0)
+                {
+                    byte[] buffer = new byte[1024];
                     networkStream = client.GetStream();
-
-                    int buffer_int = networkStream.Read(buffer, 0, 1024);
-
-                    if (buffer_int > 0)
+                    int bufferLength = networkStream.Read(buffer, 0, 1024);
+                    if (bufferLength > 0)
                     {
-                        
+
                         string message = Encoding.UTF8.GetString(buffer);
-                    if(message.IndexOf("<OnlineList>")!=-1)
+                        if (message.IndexOf("<OnlineList>") != -1)
                         {
                             message = message.Remove(0, 12);
                             online = message.Split('|');
@@ -90,7 +95,7 @@ namespace chat
                                 OnlineList.Items.Clear();
                             }));
 
-                            for(int i=0; i<online.Length-1;i+=2)
+                            for (int i = 0; i < online.Length - 1; i += 2)
                             {
 
                                 OnlineClients.Add(new Client(Convert.ToInt32(online[i + 1]), online[i]));
@@ -101,47 +106,31 @@ namespace chat
                             }
                             continue;
                         }
-                          Dispatcher.Invoke(new Action(() =>
-                          {
+                        Dispatcher.Invoke(new Action(() =>
+                        {
                             ChatHistory.Items.Add(message);
-                          }));
+                        }));
 
-                   
+
                     }
-            }
+                }
         }
         private void SendMessage_Click(object sender, RoutedEventArgs e)
         {
-            networkStream = client.GetStream();
-            byte[] buffer = Encoding.UTF8.GetBytes(MyMessage.Text);
-            networkStream.Write(buffer,0,buffer.Length);
+            MessageToServer(networkStream, MyMessage.Text);
             MyMessage.Text = "";
-            //Console.WriteLine("Работает?");
         }
 
         private void FormClosed(object sender, EventArgs e)
         {
-
-            reg.Close();
-         /*   client.Client.Disconnect(false);
-            if (client != null)
-            {
-                client.Dispose(); //Освободим ресурсы использованные клиентом
-            }
-            else
-            {
-                client.Close(); //Закрыть соединение
-            }*/
-
+           reg.Close();
         }
 
         private void SendMessage_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key== Key.Enter)
             {
-                networkStream = client.GetStream();
-                byte[] buffer = Encoding.UTF8.GetBytes(MyMessage.Text);
-                networkStream.Write(buffer, 0, buffer.Length);
+                MessageToServer(networkStream, MyMessage.Text);
                 MyMessage.Text = "";
             }
         }
@@ -150,10 +139,9 @@ namespace chat
         {
             if (OnlineList.SelectedIndex > -1)
             {
-                networkStream = client.GetStream();
-                byte[] buffer = Encoding.UTF8.GetBytes("<private id:" +
+              
+                MessageToServer(networkStream, "<private id:" +
                     OnlineClients[OnlineList.SelectedIndex].Id.ToString() + ">" + MyMessage.Text);
-                networkStream.Write(buffer, 0, buffer.Length);
                 MyMessage.Text = "";
             }
             else

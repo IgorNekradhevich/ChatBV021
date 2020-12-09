@@ -21,31 +21,20 @@ namespace chat
     /// </summary>
     public partial class Registration : Window
     {
+        public int userId { get; set; }
+     
         public Registration()
         {
             InitializeComponent();
+            userId = 0;
         }
-        public int userId { get; set; }
-       // TcpClient client;
-        //NetworkStream networkStream;
-       
+      
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             DataBaseConnection dataBaseConnection = new DataBaseConnection("localhost", "chatdb", "root", "");
             userId= dataBaseConnection.GetUserId(myLogin.Text, myPass.Password);
             if (userId > 0)
             {
-                /*IPAddress ip = IPAddress.Parse(IpAddres.Text);
-                int port = 8888;
-                client = new TcpClient();
-                client.Connect(ip, port);
-
-                networkStream = client.GetStream();
-                byte[] buffer = Encoding.UTF8.GetBytes("<myName>" + myName.Text);
-                networkStream.Write(buffer, 0, buffer.Length);
-
-               */
-
                 Close();
             }
             else
